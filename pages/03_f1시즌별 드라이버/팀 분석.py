@@ -1,6 +1,5 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
 
 # 상태 초기화
@@ -152,7 +151,7 @@ elif page == "driver" and selected_driver:
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
     df["Ranking"] = df["Ranking"].astype(int)
     fig, ax = plt.subplots(figsize=(8, 4))
-    sns.lineplot(data=df, x="Season", y="Ranking", marker="o", ax=ax)
+    ax.plot(df["Season"], df["Ranking"], marker="o", linestyle='-', color='blue')
     ax.invert_yaxis()
     ax.set_title("챔피언십 순위 추이 (낮을수록 좋음)")
     ax.set_xlabel("시즌")
@@ -174,7 +173,7 @@ elif page == "team" and selected_team:
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
     df["Ranking"] = df["Ranking"].astype(int)
     fig, ax = plt.subplots(figsize=(8, 4))
-    sns.lineplot(data=df, x="Season", y="Ranking", marker="s", color="orange", ax=ax)
+    ax.plot(df["Season"], df["Ranking"], marker="s", linestyle='-', color='orange')
     ax.invert_yaxis()
     ax.set_title("팀 순위 추이 (낮을수록 좋음)")
     ax.set_xlabel("시즌")
