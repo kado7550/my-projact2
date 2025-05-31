@@ -134,6 +134,12 @@ elif page == "season" and selected_season:
     st.subheader("🔧 기술 트렌드")
     st.write(season_data["tech"])
 
+    st.subheader("📊 드라이버 순위")
+    st.write(f"🥇 {season_data['winner_driver']}")
+
+    st.subheader("🏁 팀 순위")
+    st.write(f"🥇 {season_data['winner_team']}")
+
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
         st.session_state.season = None
