@@ -1,67 +1,144 @@
 import streamlit as st
-import yfinance as yf
-import pandas as pd
-import plotly.graph_objects as go
-from datetime import datetime, timedelta
+from PIL import Image
+import os
 
-st.set_page_config(page_title="시가총액 TOP10 변화", layout="wide")
-st.title("📈 전 세계 시가총액 TOP10 기업의 3년간 변화")
+st.set_page_config(page_title="배그 총기 추천기", layout="centered")
+st.title("🎮 배그 실력 기반 총기 및 파츠 추천기")
+st.write("플레이어의 실력과 플레이 시간에 맞는 근접전/저격전 추천 무기, 파츠, 배율 정보를 제공합니다.")
 
-top10_tickers = {
-    "Apple": "AAPL",
-    "Microsoft": "MSFT",
-    "Saudi Aramco": "2222.SR",
-    "Alphabet": "GOOGL",
-    "Amazon": "AMZN",
-    "Nvidia": "NVDA",
-    "Berkshire Hathaway": "BRK-B",
-    "Meta": "META",
-    "TSMC": "TSM",
-    "Tesla": "TSLA"
-}
+# 사용자 입력
+time_played = st.slider("총 플레이 시간 (시간 단위)", 0, 1000, 50)
+days_played = st.slider("플레이한 일 수", 0, 365, 30)
+kd = st.slider("K/D 비율", 0.0, 10.0, 1.0, 0.1)
+avg_damage = st.slider("평균 딜량", 0, 1000, 150)
+win_rate = st.slider("승률 (%)", 0, 100, 5)
 
-start_date = datetime.today() - timedelta(days=365 * 3)
-end_date = datetime.today()
+# 총기 추천 로직
+def recommend_weapons(kd, dmg, win, hours, days):
+    score = (kd * 2 + dmg / 100 + win / 10 + hours / 100 + days / 30)
 
-@st.cache_data
-def fetch_market_cap_data(tickers):
-    data = {}
-    for name, ticker in tickers.items():
-        try:
-            ticker_obj = yf.Ticker(ticker)
-            hist = ticker_obj.history(start=start_date, end=end_date, interval="1mo")
-            shares_outstanding = ticker_obj.info.get("sharesOutstanding", None)
+    if score < 10:
+        return {
+            "레벨": "초보자",
+            "근접": [
+                {
+                    "이름": "UMP45",
+                    "성능": "낮은 반동과 안정적인 조작성",
+                    "파츠": ["소음기", "수직 손잡이"],
+                    "배율": "Red Dot",
+                    "이미지": "images/ump45.jpg"
+                },
+                {
+                    "이름": "Vector",
+                    "성능": "빠른 연사 속도, 근거리에서 강력함",
+                    "파츠": ["소음기", "앵글 손잡이"],
+                    "배율": "홀로그램",
+                    "이미지": "images/vector.jpg"
+                }
+            ],
+            "저격": [
+                {
+                    "이름": "SKS",
+                    "성능": "초보자에게 적당한 반자동 저격총",
+                    "파츠": ["소음기", "척추 손잡이"],
+                    "배율": "4배율",
+                    "이미지": "images/sks.jpg"
+                },
+                {
+                    "이름": "Mini14",
+                    "성능": "낮은 탄퍼짐, 빠른 연사",
+                    "파츠": ["보정기", "체크 패드"],
+                    "배율": "3배율",
+                    "이미지": "images/mini14.jpg"
+                }
+            ]
+        }
+    elif score < 18:
+        return {
+            "레벨": "중급자",
+            "근접": [
+                {
+                    "이름": "M416",
+                    "성능": "전천후 사용 가능, 안정적인 반동 제어",
+                    "파츠": ["보정기", "수직 손잡이"],
+                    "배율": "Red Dot",
+                    "이미지": "images/m416.jpg"
+                },
+                {
+                    "이름": "Beryl M762",
+                    "성능": "높은 데미지, 어려운 반동",
+                    "파츠": ["앵글 손잡이", "보정기"],
+                    "배율": "2배율",
+                    "이미지": "images/beryl.jpg"
+                }
+            ],
+            "저격": [
+                {
+                    "이름": "SLR",
+                    "성능": "강한 반동과 높은 데미지",
+                    "파츠": ["보정기", "척추 손잡이"],
+                    "배율": "6배율",
+                    "이미지": "images/slr.jpg"
+                },
+                {
+                    "이름": "Mini14",
+                    "성능": "균형 잡힌 저격총",
+                    "파츠": ["보정기", "체크 패드"],
+                    "배율": "3배율",
+                    "이미지": "images/mini14.jpg"
+                }
+            ]
+        }
+    else:
+        return {
+            "레벨": "고수",
+            "근접": [
+                {
+                    "이름": "Mk47 Mutant",
+                    "성능": "단발 화력 강력, 고난이도",
+                    "파츠": ["소음기", "체크 패드"],
+                    "배율": "3배율",
+                    "이미지": "images/mk47.jpg"
+                },
+                {
+                    "이름": "Beryl M762",
+                    "성능": "높은 DPS, 반동 제어 필수",
+                    "파츠": ["보정기", "수직 손잡이"],
+                    "배율": "2배율",
+                    "이미지": "images/beryl.jpg"
+                }
+            ],
+            "저격": [
+                {
+                    "이름": "Mk14",
+                    "성능": "DMR 중 최강 화력, 반동 높음",
+                    "파츠": ["소음기", "DMR 손잡이"],
+                    "배율": "6배율",
+                    "이미지": "images/mk14.jpg"
+                },
+                {
+                    "이름": "AWM",
+                    "성능": "가장 강력한 볼트액션 저격총",
+                    "파츠": ["소음기"],
+                    "배율": "8배율",
+                    "이미지": "images/awm.jpg"
+                }
+            ]
+        }
 
-            if shares_outstanding is None:
-                st.warning(f"{name}의 주식 수 데이터를 찾을 수 없습니다.")
-                continue
+# 추천 실행
+if st.button("🔍 추천 받기"):
+    result = recommend_weapons(kd, avg_damage, win_rate, time_played, days_played)
+    st.subheader(f"🎯 추천 결과 - {result['레벨']}")
 
-            hist["Market Cap"] = hist["Close"] * shares_outstanding
-            hist = hist[["Market Cap"]].rename(columns={"Market Cap": name})
-            data[name] = hist
-        except Exception as e:
-            st.error(f"{name} 데이터 로드 실패: {e}")
-    return data
-
-data_dict = fetch_market_cap_data(top10_tickers)
-
-if data_dict:
-    market_caps = pd.concat(data_dict.values(), axis=1)
-    market_caps.index = market_caps.index.strftime("%Y-%m")
-    market_caps.dropna(inplace=True)
-
-    fig = go.Figure()
-    for company in market_caps.columns:
-        fig.add_trace(go.Scatter(x=market_caps.index, y=market_caps[company] / 1e12,
-                                 mode='lines+markers', name=company))
-
-    fig.update_layout(
-        title="전 세계 시가총액 TOP10 기업의 시가총액 추이 (단위: 조 달러)",
-        xaxis_title="날짜",
-        yaxis_title="시가총액 (조 달러)",
-        hovermode="x unified"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-else:
-    st.error("데이터를 불러오지 못했습니다.")
+    for category in ["근접", "저격"]:
+        st.markdown(f"### 🧩 {category}전 추천")
+        for weapon in result[category]:
+            st.markdown(f"**🔫 {weapon['이름']}**")
+            st.markdown(f"- 성능: {weapon['성능']}")
+            st.markdown(f"- 추천 파츠: {', '.join(weapon['파츠'])}")
+            st.markdown(f"- 추천 배율: {weapon['배율']}")
+            if os.path.exists(weapon['이미지']):
+                st.image(Image.open(weapon['이미지']), width=400)
+            else:
+                st.markdown("(이미지를 찾을 수 없습니다)")
