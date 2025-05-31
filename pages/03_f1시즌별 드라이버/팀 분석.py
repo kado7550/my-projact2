@@ -1,52 +1,61 @@
 import streamlit as st
 
-# 샘플 데이터 (실제 앱에서는 이 부분을 데이터베이스나 API와 연동 가능)
+# 시즌별 데이터
 f1_data = {
-    "2021": {
+    "2024": {
+        "winner_driver": "Max Verstappen",
+        "winner_team": "McLaren",
+        "highlights": "Verstappen의 4연패 달성, McLaren의 26년 만의 컨스트럭터 우승",
+        "tech": "하이브리드 파워 유닛의 최적화",
+    },
+    "2023": {
         "winner_driver": "Max Verstappen",
         "winner_team": "Red Bull Racing",
-        "highlights": "Verstappen vs Hamilton 대결, 마지막 경기에서 역전 우승",
-        "tech": "하이 레이크(Rake) 컨셉, 공기역학 업그레이드",
-        "driver_history": {
-            "Max Verstappen": {
-                "World Championships": 3,
-                "Wins": 60,
-                "Podiums": 90,
-                "Debut": "2015"
-            }
-        },
-        "team_history": {
-            "Red Bull Racing": {
-                "World Championships": 6,
-                "Wins": 120,
-                "Debut": "2005"
-            }
-        }
+        "highlights": "Red Bull의 압도적인 시즌, Verstappen의 3연패",
+        "tech": "효율적인 에어로다이내믹 패키지",
     },
-    "2020": {
-        "winner_driver": "Lewis Hamilton",
-        "winner_team": "Mercedes",
-        "highlights": "COVID-19 팬데믹 시즌, Hamilton의 지배적인 우승",
-        "tech": "DAS 시스템 (Dual Axis Steering)",
-        "driver_history": {
-            "Lewis Hamilton": {
-                "World Championships": 7,
-                "Wins": 103,
-                "Podiums": 195,
-                "Debut": "2007"
-            }
-        },
-        "team_history": {
-            "Mercedes": {
-                "World Championships": 8,
-                "Wins": 115,
-                "Debut": "1954"
-            }
-        }
-    }
+    # ... (1990년부터 2022년까지의 데이터 추가)
+    "1990": {
+        "winner_driver": "Ayrton Senna",
+        "winner_team": "McLaren",
+        "highlights": "Senna와 Prost의 치열한 경쟁",
+        "tech": "액티브 서스펜션 도입",
+    },
 }
 
-# 앱 시작
+# 드라이버 성적 데이터
+driver_history = {
+    "Max Verstappen": {
+        "World Championships": 4,
+        "Wins": 70,
+        "Podiums": 100,
+        "Debut": "2015",
+    },
+    "Ayrton Senna": {
+        "World Championships": 3,
+        "Wins": 41,
+        "Podiums": 80,
+        "Debut": "1984",
+    },
+    # ... (기타 드라이버 데이터 추가)
+}
+
+# 팀 성적 데이터
+team_history = {
+    "McLaren": {
+        "World Championships": 9,
+        "Wins": 183,
+        "Debut": "1966",
+    },
+    "Red Bull Racing": {
+        "World Championships": 6,
+        "Wins": 113,
+        "Debut": "2005",
+    },
+    # ... (기타 팀 데이터 추가)
+}
+
+# Streamlit 앱 구성
 st.title("🏎️ 시즌별 드라이버/팀 순위 분석")
 
 # 시즌 선택
@@ -54,26 +63,35 @@ season = st.selectbox("시즌을 선택하세요", sorted(f1_data.keys(), revers
 
 if st.button("해당 시즌 분석 보기"):
     data = f1_data[season]
-    st.subheader(f"🏁 {season} 시즌 결과")
-    
-    # 우승자와 우승팀 표시
-    driver_col, team_col = st.columns(2)
-    
-    with driver_col:
-        if st.button(f"드라이버 우승자: {data['winner_driver']}"):
-            driver_stats = data["driver_history"][data["winner_driver"]]
-            st.markdown(f"**{data['winner_driver']} 역대 성적**")
-            st.json(driver_stats)
+    st.subheader(f"🏁 {season} 시즌 요약")
 
-    with team_col:
-        if st.button(f"컨스트럭터 우승팀: {data['winner_team']}"):
-            team_stats = data["team_history"][data["winner_team"]]
-            st.markdown(f"**{data['winner_team']} 팀의 역대 성적**")
-            st.json(team_stats)
-
-    # 관전 포인트와 기술 요소
+    # 관전 포인트 및 기술
     st.markdown("### 🎯 관전 포인트")
     st.write(data["highlights"])
 
     st.markdown("### 🔧 대표적인 기술")
     st.write(data["tech"])
+
+    # 드라이버 & 팀 클릭 시 성적 표시
+    st.markdown("### 🏆 시즌 우승자 및 팀")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button(f"드라이버 우승자: {data['winner_driver']}"):
+            name = data['winner_driver']
+            if name in driver_history:
+                st.markdown(f"#### {name} 역대 성적")
+                st.json(driver_history[name])
+            else:
+                st.warning("드라이버 정보가 없습니다.")
+
+    with col2:
+        if st.button(f"컨스트럭터 우승팀: {data['winner_team']}"):
+            team = data['winner_team']
+            if team in team_history:
+                st.markdown(f"#### {team} 팀 역대 성적")
+                st.json(team_history[team])
+            else:
+                st.warning("팀 정보가 없습니다.")
+
