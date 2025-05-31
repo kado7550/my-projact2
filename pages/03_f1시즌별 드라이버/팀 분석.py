@@ -19,7 +19,7 @@ driver_history = {
         "Wins": 70,
         "Podiums": 100,
         "Debut": "2015",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/8/88/Max_Verstappen_2017_Malaysia_3.jpg",
+        "image": "https://raw.githubusercontent.com/f1-data/images/main/drivers/max_verstappen.jpg",
         "seasons": {"2020": 2, "2021": 1, "2022": 1, "2023": 1, "2024": 1}
     },
     "Lewis Hamilton": {
@@ -27,7 +27,7 @@ driver_history = {
         "Wins": 103,
         "Podiums": 195,
         "Debut": "2007",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Lewis_Hamilton_2016_Malaysia_3.jpg",
+        "image": "https://raw.githubusercontent.com/f1-data/images/main/drivers/lewis_hamilton.jpg",
         "seasons": {"2020": 1, "2021": 2}
     }
 }
@@ -38,21 +38,21 @@ team_history = {
         "World Championships": 6,
         "Wins": 113,
         "Debut": "2005",
-        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/Red_Bull_Racing_logo.svg/320px-Red_Bull_Racing_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/f1-data/images/main/teams/red_bull.png",
         "seasons": {"2022": 1, "2023": 1}
     },
     "Mercedes": {
         "World Championships": 8,
         "Wins": 125,
         "Debut": "1954",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Mercedes-Benz_in_Formula_One_logo.svg/320px-Mercedes-Benz_in_Formula_One_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/f1-data/images/main/teams/mercedes.png",
         "seasons": {"2020": 1, "2021": 1}
     },
     "McLaren": {
         "World Championships": 9,
         "Wins": 183,
         "Debut": "1966",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/McLaren_Racing_logo.svg/320px-McLaren_Racing_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/f1-data/images/main/teams/mclaren.png",
         "seasons": {"2024": 1}
     }
 }
@@ -149,13 +149,17 @@ elif page == "driver" and selected_driver:
 
     st.subheader("📈 시즌별 챔피언십 순위")
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
+    df = df.sort_values("Season")
     df["Ranking"] = df["Ranking"].astype(int)
     fig, ax = plt.subplots(figsize=(8, 4))
-    ax.plot(df["Season"], df["Ranking"], marker="o", linestyle='-', color='blue')
+    ax.plot(df["Season"], df["Ranking"], marker="o", linestyle='-', color='blue', label="드라이버 순위")
+    for i, txt in enumerate(df["Ranking"]):
+        ax.annotate(txt, (df["Season"].iloc[i], df["Ranking"].iloc[i]), textcoords="offset points", xytext=(0, -10), ha='center')
     ax.invert_yaxis()
     ax.set_title("챔피언십 순위 추이 (낮을수록 좋음)")
     ax.set_xlabel("시즌")
     ax.set_ylabel("순위")
+    ax.legend()
     st.pyplot(fig)
 
     if st.button("🏠 메인으로 돌아가기"):
@@ -171,13 +175,17 @@ elif page == "team" and selected_team:
 
     st.subheader("📈 시즌별 챔피언십 순위")
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
+    df = df.sort_values("Season")
     df["Ranking"] = df["Ranking"].astype(int)
     fig, ax = plt.subplots(figsize=(8, 4))
-    ax.plot(df["Season"], df["Ranking"], marker="s", linestyle='-', color='orange')
+    ax.plot(df["Season"], df["Ranking"], marker="s", linestyle='-', color='orange', label="팀 순위")
+    for i, txt in enumerate(df["Ranking"]):
+        ax.annotate(txt, (df["Season"].iloc[i], df["Ranking"].iloc[i]), textcoords="offset points", xytext=(0, -10), ha='center')
     ax.invert_yaxis()
     ax.set_title("팀 순위 추이 (낮을수록 좋음)")
     ax.set_xlabel("시즌")
     ax.set_ylabel("순위")
+    ax.legend()
     st.pyplot(fig)
 
     if st.button("🏠 메인으로 돌아가기"):
