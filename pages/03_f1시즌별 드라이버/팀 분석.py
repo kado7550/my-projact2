@@ -105,7 +105,6 @@ if page == "main":
     if st.button("선택한 시즌 보기"):
         st.session_state.page = "season"
         st.session_state.season = season
-        st.experimental_rerun()
 
 # 시즌 상세
 elif page == "season" and selected_season:
@@ -119,7 +118,6 @@ elif page == "season" and selected_season:
         if st.button(f"{driver_name} 드라이버 이력 보기"):
             st.session_state.page = "driver"
             st.session_state.driver = driver_name
-            st.experimental_rerun()
         st.image(driver_history[driver_name]["image"], width=300)
     with col2:
         st.subheader("우승 팀")
@@ -127,7 +125,6 @@ elif page == "season" and selected_season:
         if st.button(f"{team_name} 팀 이력 보기"):
             st.session_state.page = "team"
             st.session_state.team = team_name
-            st.experimental_rerun()
         st.image(team_history[team_name]["logo"], width=300)
 
     st.markdown("---")
@@ -138,7 +135,9 @@ elif page == "season" and selected_season:
 
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
-        st.experimental_rerun()
+        st.session_state.season = None
+        st.session_state.driver = None
+        st.session_state.team = None
 
 # 드라이버 상세
 elif page == "driver" and selected_driver:
@@ -161,7 +160,7 @@ elif page == "driver" and selected_driver:
 
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
-        st.experimental_rerun()
+        st.session_state.driver = None
 
 # 팀 상세
 elif page == "team" and selected_team:
@@ -184,6 +183,6 @@ elif page == "team" and selected_team:
 
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
-        st.experimental_rerun()
+        st.session_state.team = None
 
 
