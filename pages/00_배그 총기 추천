@@ -1,93 +1,23 @@
 import streamlit as st
 
-st.title("MBTI별 배틀그라운드 총기 추천기")
+st.set_page_config(page_title="MBTI 총기 추천", page_icon="🔫")
+st.title("🔫 MBTI별 배틀그라운드 총기 추천기")
 
-mbti_types = [
+mbti_list = [
     "ISTJ", "ISFJ", "INFJ", "INTJ",
     "ISTP", "ISFP", "INFP", "INTP",
     "ESTP", "ESFP", "ENFP", "ENTP",
     "ESTJ", "ESFJ", "ENFJ", "ENTJ"
 ]
 
-mbti = st.selectbox("당신의 MBTI 유형을 선택하세요:", mbti_types)
+mbti = st.selectbox("당신의 MBTI 유형을 선택하세요:", mbti_list)
 
-# 총기 정보: 이름, 이미지 URL, 추천 파츠
-gun_info = {
+# 총기 정보 (이미지, 파츠, 탄약)
+guns = {
     "M416": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/2/2c/M416.png",
-        "parts": ["보정기", "수직 손잡이", "확대 탄창", "레드도트"]
+        "img": "https://static.wikia.nocookie.net/pubg/images/3/36/Weapon_M416.png",
+        "parts": ["보정기", "수직 손잡이", "확장 탄창", "레드도트"],
+        "ammo": "5.56mm"
     },
     "SKS": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/f/f2/SKS.png",
-        "parts": ["소음기", "반동 감소 그립", "치크패드", "6배율"]
-    },
-    "UMP45": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/0/04/UMP45.png",
-        "parts": ["소음기", "레이저 포인터", "퀵드로우 탄창", "레드도트"]
-    },
-    "Mini 14": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/f/fe/Mini14.png",
-        "parts": ["보정기", "치크패드", "4배율"]
-    },
-    "Groza": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/5/5e/Groza.png",
-        "parts": ["소음기", "퀵드로우 탄창", "홀로그램"]
-    },
-    "MK14": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/5/54/Mk14.png",
-        "parts": ["소음기", "치크패드", "8배율"]
-    },
-    "Vector": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/6/63/Vector.png",
-        "parts": ["소음기", "확장 탄창", "버티컬 그립", "홀로그램"]
-    },
-    "Kar98k": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/2/2d/Kar98k.png",
-        "parts": ["소음기", "치크패드", "6배율"]
-    },
-    "SCAR-L": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/7/75/SCAR-L.png",
-        "parts": ["보정기", "수직 손잡이", "레드도트"]
-    },
-    "SLR": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/2/26/SLR.png",
-        "parts": ["소음기", "치크패드", "6배율"]
-    },
-    "AUG A3": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/f/f7/AUG_A3.png",
-        "parts": ["보정기", "수직 손잡이", "확장 탄창", "레드도트"]
-    },
-    "AWM": {
-        "img": "https://static.wikia.nocookie.net/pubg/images/a/a4/AWM.png",
-        "parts": ["소음기", "볼트액션 패드", "8배율"]
-    },
-    # 추가하고 싶은 총기는 여기에 계속 추가 가능
-}
-
-# MBTI → (AR/SMG 총기 이름, DMR/SR 총기 이름)
-mbti_guns = {
-    "ISTJ": ("M416", "SKS"),
-    "ISFJ": ("UMP45", "Mini 14"),
-    "INTJ": ("Groza", "MK14"),
-    "ESFP": ("Vector", "Kar98k"),
-    "ENFP": ("SCAR-L", "SLR"),
-    "ENTJ": ("AUG A3", "AWM"),
-    # 기타 MBTI도 원하는 대로 매핑 가능
-}
-
-if mbti in mbti_guns:
-    gun1, gun2 = mbti_guns[mbti]
-    
-    st.subheader("추천 총기 1: 돌격소총 / SMG")
-    st.image(gun_info[gun1]["img"], caption=gun1, width=300)
-    st.markdown("**추천 파츠:**")
-    for part in gun_info[gun1]["parts"]:
-        st.write(f"- {part}")
-    
-    st.subheader("추천 총기 2: DMR / 저격소총")
-    st.image(gun_info[gun2]["img"], caption=gun2, width=300)
-    st.markdown("**추천 파츠:**")
-    for part in gun_info[gun2]["parts"]:
-        st.write(f"- {part}")
-else:
-    st.info("이 MBTI에 대한 총기 정보가 아직 등록되지 않았습니다.")
+        "img": "https://static.wikia.nocookie.net/pubg/images/2/2c/Weapon_SKS.png_
