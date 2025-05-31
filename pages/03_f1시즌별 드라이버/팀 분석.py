@@ -19,7 +19,7 @@ driver_history = {
         "Wins": 70,
         "Podiums": 100,
         "Debut": "2015",
-        "image": "https://raw.githubusercontent.com/f1-data/images/main/drivers/max_verstappen.jpg",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Max_Verstappen_2017_Malaysia_3.jpg/440px-Max_Verstappen_2017_Malaysia_3.jpg",
         "seasons": {"2020": 2, "2021": 1, "2022": 1, "2023": 1, "2024": 1}
     },
     "Lewis Hamilton": {
@@ -27,7 +27,7 @@ driver_history = {
         "Wins": 103,
         "Podiums": 195,
         "Debut": "2007",
-        "image": "https://raw.githubusercontent.com/f1-data/images/main/drivers/lewis_hamilton.jpg",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Lewis_Hamilton_2016_Malaysia_2.jpg/440px-Lewis_Hamilton_2016_Malaysia_2.jpg",
         "seasons": {"2020": 1, "2021": 2}
     }
 }
@@ -38,21 +38,21 @@ team_history = {
         "World Championships": 6,
         "Wins": 113,
         "Debut": "2005",
-        "logo": "https://raw.githubusercontent.com/f1-data/images/main/teams/red_bull.png",
+        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Red_Bull_Racing_logo.svg/320px-Red_Bull_Racing_logo.svg.png",
         "seasons": {"2022": 1, "2023": 1}
     },
     "Mercedes": {
         "World Championships": 8,
         "Wins": 125,
         "Debut": "1954",
-        "logo": "https://raw.githubusercontent.com/f1-data/images/main/teams/mercedes.png",
+        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/9/9b/Mercedes-Benz_in_Motorsport_logo.svg/320px-Mercedes-Benz_in_Motorsport_logo.svg.png",
         "seasons": {"2020": 1, "2021": 1}
     },
     "McLaren": {
         "World Championships": 9,
         "Wins": 183,
         "Debut": "1966",
-        "logo": "https://raw.githubusercontent.com/f1-data/images/main/teams/mclaren.png",
+        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/McLaren_Racing_logo.svg/320px-McLaren_Racing_logo.svg.png",
         "seasons": {"2024": 1}
     }
 }
@@ -167,7 +167,7 @@ elif page == "driver" and selected_driver:
     st.image(data["image"], width=300)
     for k, v in data.items():
         if k not in ["image", "seasons"]:
-            st.markdown(f"### ✅ **{k}**: {v}")
+            st.markdown(f"## ✅ **{k}**: {v}")
 
     st.subheader("📈 시즌별 챔피언십 순위")
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
@@ -195,7 +195,7 @@ elif page == "team" and selected_team:
     st.image(data["logo"], width=300)
     for k, v in data.items():
         if k not in ["logo", "seasons"]:
-            st.markdown(f"### ✅ **{k}**: {v}")
+            st.markdown(f"## ✅ **{k}**: {v}")
 
     st.subheader("📈 시즌별 챔피언십 순위")
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
@@ -211,6 +211,10 @@ elif page == "team" and selected_team:
     ax.set_ylabel("순위")
     ax.legend()
     st.pyplot(fig)
+
+    if st.button("🏠 메인으로 돌아가기"):
+        st.session_state.page = "main"
+        st.session_state.team = None
 
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
