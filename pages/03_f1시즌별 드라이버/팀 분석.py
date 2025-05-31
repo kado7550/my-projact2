@@ -72,7 +72,7 @@ f1_data = {
         "winner_team": "Red Bull Racing",
         "highlights": "Verstappen의 3연패, Red Bull의 압도적인 득점력",
         "tech": "효율적인 그라운드 이펙트 설계",
-        "highlight_video": "https://www.youtube.com/watch?v=UOoWLuQl9zE",
+        "highlight_video": "https://www.youtube.com/watch?v=LehZYmvBniY",
         "tech_detail": "Red Bull은 2023년 시즌에서 그라운드 이펙트를 최적화한 설계로 다운포스를 높이고 직선 속도를 유지했습니다."
     },
     "2022": {
@@ -80,7 +80,7 @@ f1_data = {
         "winner_team": "Red Bull Racing",
         "highlights": "Ferrari와 치열한 경쟁 끝에 우승",
         "tech": "18인치 타이어와 그라운드 이펙트 적용",
-        "highlight_video": "https://www.youtube.com/watch?v=kzBxPr5ldUY",
+        "highlight_video": "https://www.youtube.com/watch?v=qt2tyfczbVo",
         "tech_detail": "18인치 타이어가 도입되며 전략 변화가 발생했고, 차량 하부 그라운드 이펙트를 이용한 설계가 경기력 향상에 기여했습니다."
     },
     "2021": {
@@ -88,7 +88,7 @@ f1_data = {
         "winner_team": "Mercedes",
         "highlights": "Verstappen vs Hamilton의 역사적 시즌",
         "tech": "고속 코너링 설계, 세트업 전쟁",
-        "highlight_video": "https://www.youtube.com/watch?v=onFzCIT3MyA",
+        "highlight_video": "https://www.youtube.com/watch?v=ARiMh6hNj_s",
         "tech_detail": "고속 코너에서의 접지력 개선을 위한 서스펜션 세트업이 시즌의 성패를 가른 주요 기술 요소였습니다."
     },
     "2020": {
@@ -96,7 +96,7 @@ f1_data = {
         "winner_team": "Mercedes",
         "highlights": "COVID-19 단축 시즌, Hamilton의 7번째 타이틀",
         "tech": "DAS 시스템, 하이브리드 효율성",
-        "highlight_video": "https://www.youtube.com/watch?v=F_4vIoEGNuU",
+        "highlight_video": "https://www.youtube.com/watch?v=yywWWGad6s0",
         "tech_detail": "Mercedes는 DAS(Dual Axis Steering) 시스템을 도입하여 타이어 온도를 능동적으로 조절하며 퍼포먼스를 유지했습니다."
     }
 }
@@ -141,8 +141,7 @@ elif page == "season" and selected_season:
     st.markdown("---")
     st.subheader("🎯 시즌 관전 포인트")
     st.write(season_data["highlights"])
-    if st.button("🎬 하이라이트 영상 보기"):
-        st.video(season_data["highlight_video"])
+    st.markdown(f"[📺 하이라이트 영상 보러가기]({season_data['highlight_video']})")
 
     st.subheader("🔧 기술 트렌드")
     st.write(season_data["tech"])
@@ -168,7 +167,7 @@ elif page == "driver" and selected_driver:
     st.image(data["image"], width=300)
     for k, v in data.items():
         if k not in ["image", "seasons"]:
-            st.markdown(f"#### ✅ **{k}**: {v}")
+            st.markdown(f"### ✅ **{k}**: {v}")
 
     st.subheader("📈 시즌별 챔피언십 순위")
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
@@ -196,7 +195,7 @@ elif page == "team" and selected_team:
     st.image(data["logo"], width=300)
     for k, v in data.items():
         if k not in ["logo", "seasons"]:
-            st.markdown(f"#### ✅ **{k}**: {v}")
+            st.markdown(f"### ✅ **{k}**: {v}")
 
     st.subheader("📈 시즌별 챔피언십 순위")
     df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
@@ -216,4 +215,3 @@ elif page == "team" and selected_team:
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
         st.session_state.team = None
-
