@@ -1,6 +1,16 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 
+# 상태 초기화
+if "page" not in st.session_state:
+    st.session_state.page = "main"
+if "season" not in st.session_state:
+    st.session_state.season = None
+if "driver" not in st.session_state:
+    st.session_state.driver = None
+if "team" not in st.session_state:
+    st.session_state.team = None
+
 # 드라이버 데이터
 driver_history = {
     "Max Verstappen": {
@@ -9,9 +19,7 @@ driver_history = {
         "Podiums": 100,
         "Debut": "2015",
         "image": "https://upload.wikimedia.org/wikipedia/commons/8/88/Max_Verstappen_2017_Malaysia_3.jpg",
-        "seasons": {
-            "2020": 2, "2021": 1, "2022": 1, "2023": 1, "2024": 1
-        }
+        "seasons": {"2020": 2, "2021": 1, "2022": 1, "2023": 1, "2024": 1}
     },
     "Lewis Hamilton": {
         "World Championships": 7,
@@ -19,9 +27,7 @@ driver_history = {
         "Podiums": 195,
         "Debut": "2007",
         "image": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Lewis_Hamilton_2016_Malaysia_3.jpg",
-        "seasons": {
-            "2020": 1, "2021": 2
-        }
+        "seasons": {"2020": 1, "2021": 2}
     }
 }
 
@@ -32,27 +38,21 @@ team_history = {
         "Wins": 113,
         "Debut": "2005",
         "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/Red_Bull_Racing_logo.svg/320px-Red_Bull_Racing_logo.svg.png",
-        "seasons": {
-            "2022": 1, "2023": 1
-        }
+        "seasons": {"2022": 1, "2023": 1}
     },
     "Mercedes": {
         "World Championships": 8,
         "Wins": 125,
         "Debut": "1954",
         "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Mercedes-Benz_in_Formula_One_logo.svg/320px-Mercedes-Benz_in_Formula_One_logo.svg.png",
-        "seasons": {
-            "2020": 1, "2021": 1
-        }
+        "seasons": {"2020": 1, "2021": 1}
     },
     "McLaren": {
         "World Championships": 9,
         "Wins": 183,
         "Debut": "1966",
         "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/McLaren_Racing_logo.svg/320px-McLaren_Racing_logo.svg.png",
-        "seasons": {
-            "2024": 1
-        }
+        "seasons": {"2024": 1}
     }
 }
 
@@ -90,24 +90,24 @@ f1_data = {
     }
 }
 
-# 페이지 구성
 st.set_page_config(page_title="F1 시즌별 드라이버 팀 분석", layout="wide")
 
-# 페이지 라우팅
-page = st.experimental_get_query_params().get("page", ["main"])[0]
-selected_season = st.experimental_get_query_params().get("season", [None])[0]
-selected_driver = st.experimental_get_query_params().get("driver", [None])[0]
-selected_team = st.experimental_get_query_params().get("team", [None])[0]
+# 라우팅 조건
+page = st.session_state.page
+selected_season = st.session_state.season
+selected_driver = st.session_state.driver
+selected_team = st.session_state.team
 
 # 메인 페이지
 if page == "main":
     st.title("F1 시즌별 드라이버 팀 분석")
     season = st.selectbox("시즌 선택", sorted(f1_data.keys(), reverse=True))
     if st.button("선택한 시즌 보기"):
-        st.experimental_set_query_params(page="season", season=season)
+        st.session_state.page = "season"
+        st.session_state.season = season
         st.experimental_rerun()
 
-# 시즌 상세 페이지
+# 시즌 상세
 elif page == "season" and selected_season:
     season_data = f1_data[selected_season]
     st.title(f"{selected_season} 시즌 분석")
@@ -116,24 +116,31 @@ elif page == "season" and selected_season:
     with col1:
         st.subheader("우승 드라이버")
         driver_name = season_data["winner_driver"]
-        st.markdown(f"### [{driver_name}](?page=driver&driver={driver_name})")
+        if st.button(f"{driver_name} 드라이버 이력 보기"):
+            st.session_state.page = "driver"
+            st.session_state.driver = driver_name
+            st.experimental_rerun()
         st.image(driver_history[driver_name]["image"], width=300)
     with col2:
         st.subheader("우승 팀")
         team_name = season_data["winner_team"]
-        st.markdown(f"### [{team_name}](?page=team&team={team_name})")
+        if st.button(f"{team_name} 팀 이력 보기"):
+            st.session_state.page = "team"
+            st.session_state.team = team_name
+            st.experimental_rerun()
         st.image(team_history[team_name]["logo"], width=300)
 
     st.markdown("---")
     st.subheader("🎯 시즌 관전 포인트")
     st.write(season_data["highlights"])
-
     st.subheader("🔧 기술 트렌드")
     st.write(season_data["tech"])
 
-    st.markdown("[🏠 메인으로 돌아가기](?page=main)")
+    if st.button("🏠 메인으로 돌아가기"):
+        st.session_state.page = "main"
+        st.experimental_rerun()
 
-# 드라이버 상세 페이지
+# 드라이버 상세
 elif page == "driver" and selected_driver:
     data = driver_history[selected_driver]
     st.title(f"{selected_driver} 드라이버 이력")
@@ -152,9 +159,11 @@ elif page == "driver" and selected_driver:
     ax.set_ylabel("순위")
     st.pyplot(fig)
 
-    st.markdown("[🏠 메인으로 돌아가기](?page=main)")
+    if st.button("🏠 메인으로 돌아가기"):
+        st.session_state.page = "main"
+        st.experimental_rerun()
 
-# 팀 상세 페이지
+# 팀 상세
 elif page == "team" and selected_team:
     data = team_history[selected_team]
     st.title(f"{selected_team} 팀 이력")
@@ -173,7 +182,8 @@ elif page == "team" and selected_team:
     ax.set_ylabel("순위")
     st.pyplot(fig)
 
-    st.markdown("[🏠 메인으로 돌아가기](?page=main)")
-
+    if st.button("🏠 메인으로 돌아가기"):
+        st.session_state.page = "main"
+        st.experimental_rerun()
 
 
