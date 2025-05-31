@@ -1,5 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 # 상태 초기화
 if "page" not in st.session_state:
@@ -147,11 +149,10 @@ elif page == "driver" and selected_driver:
     st.write({k: v for k, v in data.items() if k not in ["image", "seasons"]})
 
     st.subheader("📈 시즌별 챔피언십 순위")
-    seasons = list(data["seasons"].keys())
-    rankings = list(data["seasons"].values())
-
-    fig, ax = plt.subplots()
-    ax.plot(seasons, rankings, marker='o', linestyle='-')
+    df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
+    df["Ranking"] = df["Ranking"].astype(int)
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.lineplot(data=df, x="Season", y="Ranking", marker="o", ax=ax)
     ax.invert_yaxis()
     ax.set_title("챔피언십 순위 추이 (낮을수록 좋음)")
     ax.set_xlabel("시즌")
@@ -170,11 +171,10 @@ elif page == "team" and selected_team:
     st.write({k: v for k, v in data.items() if k not in ["logo", "seasons"]})
 
     st.subheader("📈 시즌별 챔피언십 순위")
-    seasons = list(data["seasons"].keys())
-    rankings = list(data["seasons"].values())
-
-    fig, ax = plt.subplots()
-    ax.plot(seasons, rankings, marker='s', linestyle='-', color='orange')
+    df = pd.DataFrame({"Season": list(data["seasons"].keys()), "Ranking": list(data["seasons"].values())})
+    df["Ranking"] = df["Ranking"].astype(int)
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.lineplot(data=df, x="Season", y="Ranking", marker="s", color="orange", ax=ax)
     ax.invert_yaxis()
     ax.set_title("팀 순위 추이 (낮을수록 좋음)")
     ax.set_xlabel("시즌")
@@ -184,5 +184,3 @@ elif page == "team" and selected_team:
     if st.button("🏠 메인으로 돌아가기"):
         st.session_state.page = "main"
         st.session_state.team = None
-
-
