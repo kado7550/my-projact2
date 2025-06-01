@@ -2,7 +2,6 @@ import pygame
 import sys
 import numpy as np
 
-# 설정
 BOARD_SIZE = 15
 CELL_SIZE = 40
 MARGIN = 60
@@ -16,15 +15,12 @@ screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
 pygame.display.set_caption("오목 게임 - Pygame")
 font = pygame.font.SysFont(None, 36)
 
-# 게임 상태
 board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
-turn = 1  # 1: 흑, 2: 백
+turn = 1
 winner = 0
 
 def draw_board():
     screen.fill(WOOD)
-    
-    # 격자선 그리기
     for i in range(BOARD_SIZE):
         pygame.draw.line(screen, BLACK, 
                          (MARGIN, MARGIN + i * CELL_SIZE),
@@ -33,7 +29,6 @@ def draw_board():
                          (MARGIN + i * CELL_SIZE, MARGIN),
                          (MARGIN + i * CELL_SIZE, SCREEN_SIZE - MARGIN), 1)
 
-    # 별점 (천원 포함)
     star_points = [(3, 3), (3, 11), (7, 7), (11, 3), (11, 11)]
     for x, y in star_points:
         px = MARGIN + x * CELL_SIZE
@@ -43,9 +38,9 @@ def draw_board():
 def draw_stones():
     for x in range(BOARD_SIZE):
         for y in range(BOARD_SIZE):
-            if board[x, y] == 1:  # 흑
+            if board[x, y] == 1:
                 color = BLACK
-            elif board[x, y] == 2:  # 백
+            elif board[x, y] == 2:
                 color = WHITE
             else:
                 continue
@@ -86,7 +81,6 @@ def show_winner(winner):
     text = font.render(msg, True, BLACK)
     screen.blit(text, (SCREEN_SIZE // 2 - 80, 20))
 
-# 게임 루프
 running = True
 while running:
     draw_board()
@@ -98,7 +92,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
         elif event.type == pygame.MOUSEBUTTONDOWN and winner == 0:
             pos = get_board_pos(pygame.mouse.get_pos())
             if pos:
