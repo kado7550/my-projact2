@@ -1,18 +1,63 @@
-import streamlit as st
+import pygame
+import sys
 import numpy as np
 
+# 설정
 BOARD_SIZE = 15
-STAR_POINTS = [(3, 3), (3, 11), (7, 7), (11, 3), (11, 11)]
+CELL_SIZE = 40
+MARGIN = 60
+SCREEN_SIZE = BOARD_SIZE * CELL_SIZE + MARGIN * 2
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+WOOD = (222, 184, 135)
 
-# 초기화
-if "board" not in st.session_state:
-    st.session_state.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
-    st.session_state.turn = 1
-    st.session_state.winner = 0
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
+pygame.display.set_caption("오목 게임 - Pygame")
+font = pygame.font.SysFont(None, 36)
 
-def check_win(board, x, y):
+# 게임 상태
+board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
+turn = 1  # 1: 흑, 2: 백
+winner = 0
+
+def draw_board():
+    screen.fill(WOOD)
+    
+    # 격자선 그리기
+    for i in range(BOARD_SIZE):
+        pygame.draw.line(screen, BLACK, 
+                         (MARGIN, MARGIN + i * CELL_SIZE),
+                         (SCREEN_SIZE - MARGIN, MARGIN + i * CELL_SIZE), 1)
+        pygame.draw.line(screen, BLACK, 
+                         (MARGIN + i * CELL_SIZE, MARGIN),
+                         (MARGIN + i * CELL_SIZE, SCREEN_SIZE - MARGIN), 1)
+
+    # 별점 (천원 포함)
+    star_points = [(3, 3), (3, 11), (7, 7), (11, 3), (11, 11)]
+    for x, y in star_points:
+        px = MARGIN + x * CELL_SIZE
+        py = MARGIN + y * CELL_SIZE
+        pygame.draw.circle(screen, BLACK, (px, py), 4)
+
+def draw_stones():
+    for x in range(BOARD_SIZE):
+        for y in range(BOARD_SIZE):
+            if board[x, y] == 1:  # 흑
+                color = BLACK
+            elif board[x, y] == 2:  # 백
+                color = WHITE
+            else:
+                continue
+            px = MARGIN + x * CELL_SIZE
+            py = MARGIN + y * CELL_SIZE
+            pygame.draw.circle(screen, color, (px, py), 16)
+            pygame.draw.circle(screen, BLACK, (px, py), 16, 1)
+
+def check_winner(x, y):
     player = board[x, y]
     directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
+
     for dx, dy in directions:
         count = 1
         for dir in [1, -1]:
@@ -28,69 +73,41 @@ def check_win(board, x, y):
             return player
     return 0
 
-def reset_game():
-    st.session_state.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
-    st.session_state.turn = 1
-    st.session_state.winner = 0
+def get_board_pos(mouse_pos):
+    mx, my = mouse_pos
+    if not (MARGIN <= mx < SCREEN_SIZE - MARGIN and MARGIN <= my < SCREEN_SIZE - MARGIN):
+        return None
+    x = int(round((mx - MARGIN) / CELL_SIZE))
+    y = int(round((my - MARGIN) / CELL_SIZE))
+    return x, y
 
-# 스타일 적용
-st.markdown("""
-<style>
-    div[data-testid="column"] {
-        padding: 0px !important;
-    }
-    button[kind="secondary"] {
-        background-color: #e6c07b !important;
-        border: none !important;
-        height: 38px !important;
-        width: 38px !important;
-        padding: 0px !important;
-    }
-    .stone {
-        font-size: 26px;
-        line-height: 38px;
-        text-align: center;
-    }
-</style>
-""", unsafe_allow_html=True)
+def show_winner(winner):
+    msg = "흑(●) 승리!" if winner == 1 else "백(○) 승리!"
+    text = font.render(msg, True, BLACK)
+    screen.blit(text, (SCREEN_SIZE // 2 - 80, 20))
 
-st.title("🎯 현실감 있는 2인용 오목 게임")
-st.caption("전통 오목판 스타일의 15x15 바둑판입니다. 흑(●), 백(○) 번갈아가며 두세요. 5목이면 승리!")
+# 게임 루프
+running = True
+while running:
+    draw_board()
+    draw_stones()
+    if winner:
+        show_winner(winner)
+    pygame.display.flip()
 
-# 보드 출력
-for i in range(BOARD_SIZE):
-    cols = st.columns(BOARD_SIZE)
-    for j in range(BOARD_SIZE):
-        cell = st.session_state.board[i, j]
-        symbol = ""
-        is_star = (i, j) in STAR_POINTS
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-        if cell == 1:
-            symbol = "●"  # 흑돌
-        elif cell == 2:
-            symbol = "○"  # 백돌
-        elif is_star:
-            symbol = "•"  # 천원 or 별점
-        else:
-            symbol = "╋"  # 선 교차점
+        elif event.type == pygame.MOUSEBUTTONDOWN and winner == 0:
+            pos = get_board_pos(pygame.mouse.get_pos())
+            if pos:
+                x, y = pos
+                if board[x, y] == 0:
+                    board[x, y] = turn
+                    winner = check_winner(x, y)
+                    if not winner:
+                        turn = 2 if turn == 1 else 1
 
-        if cell == 0 and st.session_state.winner == 0:
-            if cols[j].button(" ", key=f"{i}-{j}"):
-                st.session_state.board[i, j] = st.session_state.turn
-                winner = check_win(st.session_state.board, i, j)
-                if winner:
-                    st.session_state.winner = winner
-                else:
-                    st.session_state.turn = 2 if st.session_state.turn == 1 else 1
-        else:
-            cols[j].markdown(f"<div class='stone'>{symbol}</div>", unsafe_allow_html=True)
-
-# 게임 상태
-if st.session_state.winner:
-    winner = "흑(●)" if st.session_state.winner == 1 else "백(○)"
-    st.success(f"🏆 {winner} 승리!")
-    if st.button("🔄 게임 다시 시작"):
-        reset_game()
-else:
-    turn = "흑(●)" if st.session_state.turn == 1 else "백(○)"
-    st.info(f"🕹️ 현재 차례: {turn}")
+pygame.quit()
+sys.exit()
