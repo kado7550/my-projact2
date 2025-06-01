@@ -3,3 +3,5 @@ folium
 koreanize_matplotlib
 streamlit-folium
 yfinance
+pip install pygame
+python gomoku_pygame.py
