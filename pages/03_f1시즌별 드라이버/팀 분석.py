@@ -19,7 +19,7 @@ driver_history = {
         "Wins": 70,
         "Podiums": 100,
         "Debut": "2015",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Max_Verstappen_2017_Malaysia_3.jpg/440px-Max_Verstappen_2017_Malaysia_3.jpg",
+        "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fnamu.wiki%2Fw%2F%25EB%25A7%2589%25EC%258A%25A4%2520%25EB%25B2%25A0%25EB%25A5%25B4%25EC%258A%25A4%25ED%2583%2580%25ED%258E%259C&psig=AOvVaw3zj94SwJj4eyZiuDkSZ9Mp&ust=1748794216882000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOCX3KKMzo0DFQAAAAAdAAAAABAE",
         "seasons": {"2020": 2, "2021": 1, "2022": 1, "2023": 1, "2024": 1}
     },
     "Lewis Hamilton": {
