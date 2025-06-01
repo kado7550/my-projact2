@@ -1,20 +1,18 @@
 import streamlit as st
 import numpy as np
 
-# 오목판 크기
 BOARD_SIZE = 15
+STAR_POINTS = [(3, 3), (3, 11), (7, 7), (11, 3), (11, 11)]
 
-# 게임 상태 저장
+# 초기화
 if "board" not in st.session_state:
-    st.session_state.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)  # 0: 빈칸, 1: 흑돌, 2: 백돌
-    st.session_state.turn = 1  # 1: 흑돌, 2: 백돌
+    st.session_state.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
+    st.session_state.turn = 1
     st.session_state.winner = 0
 
 def check_win(board, x, y):
-    """5목 체크: 가로, 세로, 대각선"""
     player = board[x, y]
-    directions = [(1, 0), (0, 1), (1, 1), (1, -1)]  # →, ↓, ↘, ↙
-
+    directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
     for dx, dy in directions:
         count = 1
         for dir in [1, -1]:
@@ -35,15 +33,47 @@ def reset_game():
     st.session_state.turn = 1
     st.session_state.winner = 0
 
-# UI
-st.title("🕹️ 2인용 오목 게임 (Gomoku)")
-st.write("흑(●)과 백(○)이 번갈아 두는 전통적인 2인용 오목 게임입니다. 5목을 먼저 완성하는 사람이 승리합니다!")
+# 스타일 적용
+st.markdown("""
+<style>
+    div[data-testid="column"] {
+        padding: 0px !important;
+    }
+    button[kind="secondary"] {
+        background-color: #e6c07b !important;
+        border: none !important;
+        height: 38px !important;
+        width: 38px !important;
+        padding: 0px !important;
+    }
+    .stone {
+        font-size: 26px;
+        line-height: 38px;
+        text-align: center;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-# 게임판 표시
+st.title("🎯 현실감 있는 2인용 오목 게임")
+st.caption("전통 오목판 스타일의 15x15 바둑판입니다. 흑(●), 백(○) 번갈아가며 두세요. 5목이면 승리!")
+
+# 보드 출력
 for i in range(BOARD_SIZE):
     cols = st.columns(BOARD_SIZE)
     for j in range(BOARD_SIZE):
         cell = st.session_state.board[i, j]
+        symbol = ""
+        is_star = (i, j) in STAR_POINTS
+
+        if cell == 1:
+            symbol = "●"  # 흑돌
+        elif cell == 2:
+            symbol = "○"  # 백돌
+        elif is_star:
+            symbol = "•"  # 천원 or 별점
+        else:
+            symbol = "╋"  # 선 교차점
+
         if cell == 0 and st.session_state.winner == 0:
             if cols[j].button(" ", key=f"{i}-{j}"):
                 st.session_state.board[i, j] = st.session_state.turn
@@ -53,15 +83,14 @@ for i in range(BOARD_SIZE):
                 else:
                     st.session_state.turn = 2 if st.session_state.turn == 1 else 1
         else:
-            symbol = "●" if cell == 1 else ("○" if cell == 2 else " ")
-            cols[j].markdown(f"<div style='text-align: center; font-size: 20px'>{symbol}</div>", unsafe_allow_html=True)
+            cols[j].markdown(f"<div class='stone'>{symbol}</div>", unsafe_allow_html=True)
 
-# 현재 상태
+# 게임 상태
 if st.session_state.winner:
     winner = "흑(●)" if st.session_state.winner == 1 else "백(○)"
-    st.success(f"🎉 {winner} 승리!")
-    if st.button("🔁 다시 시작"):
+    st.success(f"🏆 {winner} 승리!")
+    if st.button("🔄 게임 다시 시작"):
         reset_game()
 else:
     turn = "흑(●)" if st.session_state.turn == 1 else "백(○)"
-    st.info(f"현재 차례: {turn}")
+    st.info(f"🕹️ 현재 차례: {turn}")
