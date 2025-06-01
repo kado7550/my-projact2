@@ -1,22 +1,27 @@
+# gomoku_pygame.py
+
 import pygame
 import sys
 import numpy as np
 
+# 기본 설정
 BOARD_SIZE = 15
 CELL_SIZE = 40
 MARGIN = 60
 SCREEN_SIZE = BOARD_SIZE * CELL_SIZE + MARGIN * 2
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-WOOD = (222, 184, 135)
+WOOD = (222, 184, 135)  # 오목판 나무 배경색
 
+# Pygame 초기화
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
 pygame.display.set_caption("오목 게임 - Pygame")
 font = pygame.font.SysFont(None, 36)
 
+# 게임 상태
 board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
-turn = 1
+turn = 1  # 1: 흑, 2: 백
 winner = 0
 
 def draw_board():
@@ -29,6 +34,7 @@ def draw_board():
                          (MARGIN + i * CELL_SIZE, MARGIN),
                          (MARGIN + i * CELL_SIZE, SCREEN_SIZE - MARGIN), 1)
 
+    # 별점 표시
     star_points = [(3, 3), (3, 11), (7, 7), (11, 3), (11, 11)]
     for x, y in star_points:
         px = MARGIN + x * CELL_SIZE
@@ -47,7 +53,7 @@ def draw_stones():
             px = MARGIN + x * CELL_SIZE
             py = MARGIN + y * CELL_SIZE
             pygame.draw.circle(screen, color, (px, py), 16)
-            pygame.draw.circle(screen, BLACK, (px, py), 16, 1)
+            pygame.draw.circle(screen, BLACK, (px, py), 16, 1)  # 테두리
 
 def check_winner(x, y):
     player = board[x, y]
@@ -81,6 +87,7 @@ def show_winner(winner):
     text = font.render(msg, True, BLACK)
     screen.blit(text, (SCREEN_SIZE // 2 - 80, 20))
 
+# 메인 게임 루프
 running = True
 while running:
     draw_board()
